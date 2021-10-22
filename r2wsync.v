@@ -1,17 +1,19 @@
-module sync_r2w #(parameter add_size = 4)
+module sync_r2w #(parameter add_size = 3)
 (
-output reg [add_size:0] rd_ptr_sync,
-input [add_size:0] rd_ptr,
-input wr_clk, wr_rst
-);
+output reg [add_size:0] rd_ptr_sync,   // read pointer after synchronization
+input [add_size:0] rd_ptr,   // read pointer before synchronization
+input wr_clk, wr_rst);  // write clock, write reset
 
-reg [add_size:0] rd1_rptr;
 
-always @(posedge wr_clk or negedge wr_rst)
+always @(posedge wr_clk )
+
+if (!wr_rst) 
 begin
-if (wr_rst) 
-{rd_ptr_sync,rd1_rptr} <= 0;
-else 
-{rd_ptr_sync,rd1_rptr} <= {rd1_rptr,rd_ptr};
+rd_ptr_sync <=0;  // if reset assign both to zero
+end
+else
+begin
+
+rd_ptr_sync<= rd_ptr;
 end
 endmodule
