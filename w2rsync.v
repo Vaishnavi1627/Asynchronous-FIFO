@@ -1,18 +1,17 @@
-module sync_w2r #(parameter add_size = 4)
+module sync_w2r #(parameter add_size = 3)(
+output reg [add_size:0] wr_ptr_sync,   //  write pointer after synchronization 
+input [add_size:0] wr_ptr, //  write pointer before synchronization 
+input rd_clk, rd_rst);  // read clock, rad reset
 
-(
-output reg [add_size:0] wr_ptr_sync,
-input [add_size:0] wr_ptr,
-input rd_clk, rd_rst
-);
 
-reg [add_size:0] wr1_wptr;
-
-always @(posedge rd_clk or negedge rd_rst)
+always @(posedge rd_clk)
+if (!rd_rst)
 begin
-if (rd_rst) 
-    {wr_ptr_sync,wr1_wptr} <= 0;
-else
-    {wr_ptr_sync,wr1_wptr} <= {wr1_wptr,wr_ptr};
+wr_ptr_sync<=0;
+end
+else 
+begin
+
+wr_ptr_sync <=wr_ptr;
 end
 endmodule
